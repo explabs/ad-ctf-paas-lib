@@ -1,28 +1,28 @@
 import argparse
-import sys
+from collections import defaultdict
 
 
 class Actions:
     def __init__(self):
-        self.functions = {}
+        self.functions = defaultdict(list)
 
     def register(self, func):
         def wrapper(action):
-            self.functions[action] = func
+            self.functions[action].append(func)
 
         return wrapper
 
     def ping(self, func):
-        self.functions["ping"] = func
+        self.functions["ping"].append(func)
 
     def put(self, func):
-        self.functions["put"] = func
+        self.functions["put"].append(func)
 
     def get(self, func):
-        self.functions["get"] = func
+        self.functions["get"].append(func)
 
     def exploit(self, func):
-        self.functions["exploit"] = func
+        self.functions["exploit"].append(func)
 
 
 class Checker(Actions):
@@ -32,9 +32,9 @@ class Checker(Actions):
         self.flag = None
         self.uniq_value = None
 
-    def run_function(self, action):
+    def run_function(self, action, counter):
         try:
-            result = self.functions[action]()
+            result = self.functions[action][counter]()
             if result:
                 print(result)
                 return 0
@@ -46,6 +46,7 @@ class Checker(Actions):
 
     def run(self):
         parser = argparse.ArgumentParser(prog='myprogram')
+        parser.add_argument("counter", help="counter for multiple flags")
         parser.add_argument("action", help="choose function")
         parser.add_argument("address", help="ip or domain")
         parser.add_argument("value", nargs='?', help="enter flag or uniq value", default=None)
@@ -54,14 +55,8 @@ class Checker(Actions):
             raise Exception(f'Cannot find function "{args.action}" in registered functions')
         self.address = args.address
         self.flag = self.uniq_value = args.value
-        exit(self.run_function(action=args.action))
-        # if len(sys.argv) < 2:
-        #     raise Exception('No arguments')
-        #
-        # if sys.argv[1] in self.functions:
-        #     self.functions[sys.argv[1]](*sys.argv)
-        # else:
-        #
+        counter = int(args.counter)
+        exit(self.run_function(action=args.action, counter=counter))
 
 
 class ArgsParser:
