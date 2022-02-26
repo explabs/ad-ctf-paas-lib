@@ -1,6 +1,6 @@
 import argparse
 from collections import defaultdict
-
+from .decorators import *
 
 class Actions:
     def __init__(self):
@@ -13,7 +13,7 @@ class Actions:
         return wrapper
 
     def ping(self, func):
-        self.functions["ping"].append(func)
+        self.functions["ping"].append(ping_decorator(func))
 
     def put(self, func):
         self.functions["put"].append(func)
@@ -22,7 +22,7 @@ class Actions:
         self.functions["get"].append(func)
 
     def exploit(self, func):
-        self.functions["exploit"].append(func)
+        self.functions["exploit"].append(exploit_decorator(func))
 
 
 class Checker(Actions):
