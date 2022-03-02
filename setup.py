@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='ad-ctf-paas-lib',
-    version='0.0.2',
+    version='0.0.3',
     packages=['checker'],
     url='',
     license='',
